@@ -1,0 +1,6 @@
+<p>Seleccione los agentes que desea consultar</p>
+<div *ngFor="let agent of agents">
+    <label>
+      <input type="checkbox" name="item" [value]="item" [(ngModel)]="selectedItems" (ngModelChange)="onCheckboxChange()"> {{ agent.name }}
+    </label>
+</div>
