@@ -17,7 +17,10 @@ export class AgentsService {
 
   getAgents(): Observable<Agent[]> {
     
-    let header = new HttpHeaders().set('Content-Type','application/json')
+    let header = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'X-API-KEY': '582K1D9FS-B2bFjfUbUf0w'
+    });
     
     return this.http.get<AgentResponse>(`${this.baseUrl}/agent`, {
       headers:header

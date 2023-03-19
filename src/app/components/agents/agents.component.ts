@@ -24,17 +24,7 @@ export class AgentsComponent implements OnInit {
 
   ngOnInit(): void {
   
-    this.agentsService.getAgents().subscribe(
-      agents => {
-        this.agents = agents;
-        console.log('Agents:', agents);
-        //Inicilizo los checkbox a falso
-        this.selectedItems = Array(this.agents.length).fill(false);
-       },
-      error => console.log(error)
-        // Manejar el error aquí
-      
-    );
+    this.refreshAgents();
 
   }
   
@@ -54,21 +44,20 @@ export class AgentsComponent implements OnInit {
         }
       );
     }
-    
-    //Este evento salta cuando se pulsa un checkbox, deberia de 
-    // hacer uso de un servicio BLE-Devices que recogiera todos los objetos detectados
-    // la ultima vez, 
-    
+  
+  }
 
-
-    
-
-    //this.mapService.getPuntos(this.selectedItems).subscribe(puntos => {
-      // Actualizar los puntos a mostrar en el mapa
-    //});
-
-    //luego, una vez recogidos los valores de los puntos deberia pintarlos
-    
-    //this.mapComponent.addSphere()
+  refreshAgents(): void {
+    this.agentsService.getAgents().subscribe(
+      agents => {
+        this.agents = agents;
+        console.log('Agents:', agents);
+        //Inicilizo los checkbox a falso
+        this.selectedItems = Array(this.agents.length).fill(false);
+       },
+      error => console.log(error)
+        // Manejar el error aquí
+      
+    );
   }
 }

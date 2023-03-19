@@ -30,9 +30,11 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   private initialState = {
     lng: -3.600833,
     lat: 37.178055,
-    zoom: 18
+    zoom: 21
   };
   
+  private max_distancia_ble = 30;
+  private max_value_rssi = 1;
 
   constructor( private mapService: MapDrawerService) { 
     this.subscription = this.mapService.agentSelected$.subscribe(
@@ -94,11 +96,71 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     
   }
 
+  private rssiToMetersBasica(rssi: number): number{
+
+    return (rssi*this.max_distancia_ble)/this.max_value_rssi
+
+  }
+
+  /*
+  La conversión de RSSI (Received Signal Strength Indicator) a distancia en 
+  metros es compleja y depende de muchos factores, como la potencia de transmisión 
+  del dispositivo BLE, la sensibilidad de recepción del receptor, el entorno de la señal 
+  y las obstrucciones, entre otros.
+
+  Sin embargo, hay algunas aproximaciones que se pueden utilizar para obtener una idea 
+  aproximada de la distancia en metros. Una de las fórmulas más comunes se conoce como la 
+  fórmula de Friis, que establece una relación entre la potencia de la señal recibida (RSSI), 
+  la distancia y otras variables. La fórmula de Friis es la siguiente:
+
+  PR = PT + Gt + Gr - 32.45 - 20*log10(d)
+  */ 
+  private formulaFriis(rssi: number): number{
+    // Parámetros de la fórmula
+    const frequency = 2400; // Frecuencia en MHz
+    const txPower = -20; // Potencia de transmisión en dBm
+    const rxSensitivity = -90; // Sensibilidad del receptor en dBm
+
+    // Constantes
+    const c = 299792458; // Velocidad de la luz en m/s
+    const lambda = c / (frequency * 1e6); // Longitud de onda en metros
+
+    // Cálculo de la distancia en metros
+    const distance = Math.pow(10, ((txPower - rssi - rxSensitivity) / (10 * 2))) * lambda / 4 / Math.PI;
+
+    return distance
+  }
+
+  private alernativaformulaFriis(rssi: number, txPower: number): number{
+    // Se define la constante TX_POWER que representa la potencia de transmisión del dispositivo BLE
+    // Esta constante se expresa en dBm y puede variar según el dispositivo
+    const TX_POWER = -59;
+
+    // Función que convierte la señal RSSI a distancia en metros
+    // Recibe como parámetro la señal RSSI en dBm
+    // Retorna la distancia en metros
+    
+    // Se calcula la diferencia entre la potencia de transmisión y la señal RSSI recibida
+    const difference = TX_POWER - rssi;
+    
+    // Se calcula la relación entre la diferencia de potencia y la atenuación de la señal
+    // Se puede estimar que la atenuación es de 2.0 en entornos libres de obstáculos y de 3.0 en entornos urbanos o con obstáculos
+    const ratio = difference / 6.0;
+    
+    // Se calcula la distancia en metros a partir de la relación obtenida
+    // Se utiliza la fórmula: d = 10 ^ ratio
+    const distance = Math.pow(10, ratio);
+    
+    return distance;
+    
+  }
+
   public addAgent(longitude: number, latitude: number, radiusRssi: number, popupText: string) {
     
     const radius = radiusRssi; // Radio en metros
     const center = [longitude, latitude]; // Centro del mapa
   
+    
     // Crear los datos de origen del círculo
 
     let sphereData = {

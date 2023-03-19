@@ -17,7 +17,10 @@ export class BleDevicesService {
 
   getLastDetectionByAgent(agent_name: string): Observable<BleDevice[]> {
     
-    let header = new HttpHeaders().set('Content-Type','application/json')
+    let header = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'X-API-KEY': '582K1D9FS-B2bFjfUbUf0w'
+    });
     
     return this.http.get<BleDevicesResponse>(`${this.baseUrl}/ble/last_detection_by_agent/${agent_name}`, {
       headers:header
