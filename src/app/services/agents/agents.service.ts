@@ -11,7 +11,7 @@ import { Agent, AgentResponse } from "./agent"
   providedIn: 'root'
 })
 export class AgentsService {
-  private baseUrl = "http://192.168.0.16:8080/api"
+  private baseUrl = "http://192.168.0.16:5000/api"
 
   constructor(private http:HttpClient) { }
 

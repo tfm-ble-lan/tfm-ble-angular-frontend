@@ -1,7 +1,15 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Map, Marker, Popup } from 'maplibre-gl';
-import { FormularioComponent } from '../formulario/formulario.component';
 import { MapDrawerService } from 'src/app/services/map-drawer/map-drawer.service';
+import { Subscription } from 'rxjs';
+import { BleDevice } from 'src/app/services/ble-devices/ble-devices';
+
+
+
+interface AgentSelection {
+  agentName: string;
+  bleDevices: BleDevice[];
+}
 
 @Component({
   selector: 'app-my-map',
@@ -9,7 +17,11 @@ import { MapDrawerService } from 'src/app/services/map-drawer/map-drawer.service
   styleUrls: ['./my-map.component.scss']
 })
 export class MyMapComponent implements OnInit, AfterViewInit {
-
+  
+  subscription: Subscription;
+  selectedAgent: string;
+  selectedBleDevices: {[key: string]: BleDevice[]} = {};
+  
   @ViewChild('map')
   private mapContainer: ElementRef<HTMLElement>;
   
@@ -22,7 +34,47 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   };
   
 
-  constructor( private mapService: MapDrawerService) { }
+  constructor( private mapService: MapDrawerService) { 
+    this.subscription = this.mapService.agentSelected$.subscribe(
+      (selection: AgentSelection) => {
+        this.selectedAgent = selection.agentName;
+        this.selectedBleDevices[this.selectedAgent] = selection.bleDevices;
+    
+        
+        //Pintar Agente
+        const selectedBleDevices = this.selectedBleDevices[this.selectedAgent];
+        let longitude: number;
+        let latitude: number;
+        // Iterar sobre cada objeto BleDevice y obtener la longitud de su agente_localization
+        selectedBleDevices.forEach(device => {
+          // Obtener el primer objeto Detection del arreglo detections
+          const firstDetection = device.detections[0];
+          // Obtener la longitud del objeto agent_localization
+          longitude = firstDetection.agent_localization.longitude;
+          latitude = firstDetection.agent_localization.latitude;
+          console.log(`El agente ${this.selectedAgent} esta en ${longitude} ${latitude}`);
+        });
+
+
+        //Pintar circunferencias
+        selectedBleDevices.forEach(device => {
+          // Obtener el primer objeto Detection del arreglo detections
+          device.detections.forEach(detection => {
+            this.addAgent(longitude,latitude,detection.rssi, device.mac)
+            console.log(`El BleDevice ${device.mac} esta a ${detection.rssi}`);  
+          });
+          // Obtener la longitud del objeto agent_localization
+          
+          
+          
+        });
+        
+
+        
+        // ...lógica de actualización del mapa...
+      }
+    );
+  }
 
   ngOnInit() {
   }
@@ -42,14 +94,14 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     
   }
 
-  public addAgent(longitude: number, latitude: number, popupText: string) {
+  public addAgent(longitude: number, latitude: number, radiusRssi: number, popupText: string) {
     
-    const radius = 100; // Radio en metros
+    const radius = radiusRssi; // Radio en metros
     const center = [longitude, latitude]; // Centro del mapa
   
     // Crear los datos de origen del círculo
 
-    const sphereData = {
+    let sphereData = {
       type: "Feature",
       geometry: {
         type: "Point",
@@ -74,8 +126,10 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       type: "circle",
       source: "sphere",
       paint: {
-        "circle-color": "#ff0000", // Color de la esfera
+        "circle-color": "transparent", // Color de la esfera
         "circle-opacity": 0.5, // Opacidad de la esfera
+        "circle-stroke-color": "#ff0000", // Color del borde rojo
+        "circle-stroke-width": 2, // Ancho del borde
         "circle-radius": {
           property: "radius",
           type: "exponential",
@@ -95,6 +149,8 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       .addTo(this.map);
   }
 
-
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }
 

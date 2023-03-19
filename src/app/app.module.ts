@@ -12,6 +12,7 @@ import { MyMapComponent } from './components/my-map/my-map.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { FormularioComponent } from './components/formulario/formulario.component';
 import { AgentsComponent } from './components/agents/agents.component';
+import { BleDevicesComponent } from './components/ble-devices/ble-devices/ble-devices.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { AgentsComponent } from './components/agents/agents.component';
     MyMapComponent,
     MenuComponent,
     FormularioComponent,
-    AgentsComponent
+    AgentsComponent,
+    BleDevicesComponent
   ],
   imports: [
     BrowserModule,
