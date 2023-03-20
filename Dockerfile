@@ -2,9 +2,9 @@ FROM ubuntu:22.04
 
 MAINTAINER Guillermo Jimenez "geonexus@gmail.com", Noel Ruiz "noelrl@gmail.com"
 
-
 # Install Node 1.19
 ENV NODE_OPTIONS=--openssl-legacy-provider
+ENV PORT 80
 
 RUN apt update -y && apt upgrade -y
 RUN apt install curl gnupg2 gnupg -y
@@ -24,4 +24,5 @@ WORKDIR  /app/angular-based-project/
 # Install MapLibre GL
 RUN npm install maplibre-gl @types/maplibre-gl
 
-ENTRYPOINT ['ng serve']
+ENTRYPOINT ["ng"]
+CMD ["serve"]
