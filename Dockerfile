@@ -25,4 +25,4 @@ WORKDIR  /app/angular-based-project/
 RUN npm install maplibre-gl @types/maplibre-gl
 
 ENTRYPOINT ["ng"]
-CMD ["serve --port 80"]
+CMD ["serve", "--port", "80"]
