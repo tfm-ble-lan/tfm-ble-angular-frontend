@@ -35,8 +35,8 @@ on:
     paths:
       - src/**
       - Dockerfile
-      - *.json
-      - *.js
+      - '*.json'
+      - '*.js'
   workflow_dispatch:
 
 permissions:
