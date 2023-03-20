@@ -6,7 +6,7 @@ MAINTAINER Guillermo Jimenez "geonexus@gmail.com", Noel Ruiz "noelrl@gmail.com"
 # Install Node 1.19
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
-RUN apt update && apt upgrade
+RUN apt update -y && apt upgrade -y
 RUN apt install curl gnupg2 gnupg -y
 RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash -
 RUN apt install nodejs
