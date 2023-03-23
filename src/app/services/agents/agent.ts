@@ -5,7 +5,9 @@ export interface AgentResponse {
 
 export interface Agent {
     name: string;
-    active: boolean
+    active: boolean;
+    api_key: string;
+    bt_address: string;
 }
 
 

@@ -20,7 +20,9 @@ export class AgentsComponent implements OnInit {
     private agentsService: AgentsService, 
     private bleDevicesService: BleDevicesService, 
     private mapService: MapDrawerService
-    ) { }
+    ) {
+      //this.selectedItems = Array(this.agents.length).fill(false);
+    }
 
   ngOnInit(): void {
   
@@ -29,12 +31,13 @@ export class AgentsComponent implements OnInit {
   }
   
   onCheckboxChange(agentName: string, index: number): void {
-    this.selectedItems[index] = !this.selectedItems[index];
-    if (!this.selectedItems[index]) {
+    //this.selectedItems[index] = !this.selectedItems[index];
+    if (this.selectedItems[index]) {
       console.log('Item selecccionado')
       this.agentBleDevices[agentName] = [];
       this.bleDevicesService.getLastDetectionByAgent(agentName).subscribe( 
         (ble_devices) => {
+          this.mapService.agentUnselected(agentName, this.agentBleDevices[agentName]);
           this.agentBleDevices[agentName] = ble_devices
           this.mapService.agentSelected(agentName, this.agentBleDevices[agentName]);
           console.log(this.agentBleDevices[agentName])
@@ -43,6 +46,10 @@ export class AgentsComponent implements OnInit {
           console.error(error);
         }
       );
+    }else{
+      console.log('Item deselecccionado')
+      this.mapService.agentUnselected(agentName, this.agentBleDevices[agentName]);
+
     }
   
   }
@@ -53,11 +60,21 @@ export class AgentsComponent implements OnInit {
         this.agents = agents;
         console.log('Agents:', agents);
         //Inicilizo los checkbox a falso
-        this.selectedItems = Array(this.agents.length).fill(false);
+        if(!this.selectedItems){
+          console.log('22');
+          this.selectedItems = Array(this.agents.length).fill(false);
+        }
        },
       error => console.log(error)
         // Manejar el error aquí
-      
+    
     );
+    if (this.agents) {
+      let index = -1;
+      this.agents.forEach( (agent) => {
+        index++;
+        this.onCheckboxChange(agent.name, index)
+      });
+    }
   }
 }

@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Map, Marker, Popup } from 'maplibre-gl';
+import { Map, Marker, LngLat, Popup } from 'maplibre-gl';
 import { MapDrawerService } from 'src/app/services/map-drawer/map-drawer.service';
 import { Subscription } from 'rxjs';
 import { BleDevice } from 'src/app/services/ble-devices/ble-devices';
-
-
 
 interface AgentSelection {
   agentName: string;
@@ -21,6 +19,9 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   subscription: Subscription;
   selectedAgent: string;
   selectedBleDevices: {[key: string]: BleDevice[]} = {};
+  agentMarker: {[key: string]: Marker} = {};
+  private lastAgentLocations: {[key: string]: {longitude: number, latitude: number}} = {};
+  private lastAgentBLEMACs: {[key: string]: string[]} = {};
   
   @ViewChild('map')
   private mapContainer: ElementRef<HTMLElement>;
@@ -36,47 +37,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   private max_distancia_ble = 30;
   private max_value_rssi = 1;
 
-  constructor( private mapService: MapDrawerService) { 
-    this.subscription = this.mapService.agentSelected$.subscribe(
-      (selection: AgentSelection) => {
-        this.selectedAgent = selection.agentName;
-        this.selectedBleDevices[this.selectedAgent] = selection.bleDevices;
-    
-        
-        //Pintar Agente
-        const selectedBleDevices = this.selectedBleDevices[this.selectedAgent];
-        let longitude: number;
-        let latitude: number;
-        // Iterar sobre cada objeto BleDevice y obtener la longitud de su agente_localization
-        selectedBleDevices.forEach(device => {
-          // Obtener el primer objeto Detection del arreglo detections
-          const firstDetection = device.detections[0];
-          // Obtener la longitud del objeto agent_localization
-          longitude = firstDetection.agent_localization.longitude;
-          latitude = firstDetection.agent_localization.latitude;
-          console.log(`El agente ${this.selectedAgent} esta en ${longitude} ${latitude}`);
-        });
-
-
-        //Pintar circunferencias
-        selectedBleDevices.forEach(device => {
-          // Obtener el primer objeto Detection del arreglo detections
-          device.detections.forEach(detection => {
-            this.addAgent(longitude,latitude,detection.rssi, device.mac)
-            console.log(`El BleDevice ${device.mac} esta a ${detection.rssi}`);  
-          });
-          // Obtener la longitud del objeto agent_localization
-          
-          
-          
-        });
-        
-
-        
-        // ...lógica de actualización del mapa...
-      }
-    );
-  }
+  constructor( private mapService: MapDrawerService) {}
 
   ngOnInit() {
   }
@@ -93,6 +54,156 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       zoom: this.initialState.zoom
     });
 
+    
+
+    this.subscription = this.mapService.agentSelected$.subscribe(
+      (selection: AgentSelection) => {
+        this.selectedAgent = selection.agentName;
+        this.selectedBleDevices[this.selectedAgent] = selection.bleDevices;
+  
+        //Primero pinto el Agente
+        this.handleAgentSelection(selection); // llama al nuevo método
+        
+      }
+    );
+
+
+    this.subscription = this.mapService.agentUnselected$.subscribe(
+      (unselection: AgentSelection) => {
+        this.selectedAgent = unselection.agentName;
+        this.selectedBleDevices[this.selectedAgent] = unselection.bleDevices;
+  
+        this.handleAgentUnselection(unselection); // llama al nuevo método
+      }
+    );
+
+    /* Agregar marcadores para las últimas ubicaciones de los agentes
+    for (const agentName in this.lastAgentLocations) {
+      if (this.lastAgentLocations.hasOwnProperty(agentName)) {
+        const { longitude, latitude } = this.lastAgentLocations[agentName];
+        this.addMarker(longitude, latitude);
+      }
+    }*/
+     
+  }
+  handleAgentUnselection(selection: AgentSelection) {
+    if ( this.agentMarker[selection.agentName]){
+      this.agentMarker[selection.agentName].setPopup(null);
+      this.agentMarker[selection.agentName].remove();
+
+      this.lastAgentBLEMACs[selection.agentName].forEach((mac) => {
+        this.map.removeLayer(`${mac}-sphere-layer`);
+        this.map.removeSource(mac);
+      });
+      this.lastAgentBLEMACs[selection.agentName] = [];
+    }
+    //ToDo: Quitar los sources mac y las layers mac-sphere-layer
+
+  }
+
+  handleAgentSelection(selection: AgentSelection) {
+    const selectedBleDevices = selection.bleDevices;
+    let longitude: number;
+    let latitude: number;
+    
+    // Iterar sobre cada objeto BleDevice y obtener la longitud de su agente_localization
+    selectedBleDevices.forEach(device => {
+      // Obtener el primer objeto Detection del arreglo detections
+      const firstDetection = device.detections[0];
+      // Obtener la longitud del objeto agent_localization
+      longitude = firstDetection.agent_localization.longitude;
+      latitude = firstDetection.agent_localization.latitude;
+      console.log(`El agente ${selection.agentName} esta en ${longitude} ${latitude}`);
+    });
+    //Pinto el Agente
+    this.agentMarker[selection.agentName] =  new Marker().setLngLat([longitude, latitude]);
+    this.agentMarker[selection.agentName].addTo(this.map);
+
+    const popup = new Popup({ 
+      closeOnClick: false 
+    }).setLngLat(
+      [longitude, latitude]
+      ).setHTML(`<p> ${selection.agentName} </p>`)
+    
+    // Asociar el Popup al Marker
+    this.agentMarker[selection.agentName].setPopup(popup);
+
+    // Mostrar el Popup
+    popup.addTo(this.map);
+
+    //Dibujo los devices asociados al Agente
+    this.handleBleDevices(longitude, latitude);
+  }
+ 
+  handleBleDevices(longitude: number, latitude: number){
+    //Despues pinto los BLEDevices
+    this.selectedBleDevices[this.selectedAgent].forEach(device => {
+      // Obtener el primer objeto Detection del arreglo detections
+      device.detections.forEach(detection => {
+        this.drawBleDevice(device.address, this.selectedAgent, longitude, latitude, detection.rssi)
+        console.log(`El BleDevice ${device.address} esta a ${detection.rssi}`);  
+      });
+      // Obtener la longitud del objeto agent_localization
+    });
+  }
+
+  // Método para dibujar un círculo en el mapa
+  drawBleDevice(address:string, agentName: string, longitude: number, latitude: number, radius: number) {
+    const center = [longitude, latitude]; // Centro del mapa
+    // Crear los datos de origen del círculo
+
+    let sphereData = {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: center
+      },
+      properties: {
+        radius: Math.abs(radius)
+      }
+    };
+    
+    this.map.addSource(address, {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: [sphereData]
+      }
+    });
+
+    // Agregar la capa de círculo para dibujar la esfera
+    this.map.addLayer({
+      id: `${address}-sphere-layer`,
+      type: "circle",
+      source: address,
+      paint: {
+        "circle-color": "transparent", // Color de la esfera
+        "circle-opacity": 0.5, // Opacidad de la esfera
+        "circle-stroke-color": "#ff0000", // Color del borde rojo
+        "circle-stroke-width": 2, // Ancho del borde
+        "circle-radius": {
+          property: "radius",
+          type: "exponential",
+          stops: [
+            [0, 0],
+            [20, Math.abs(radius) * 2] // Escala de radio en función del zoom
+          ]
+        }
+      }
+    });
+
+    // Guarda la referencia al círculo en la variable circle
+    //this.lastAgentBLECircles[agentName].push(circle);
+    if (this.lastAgentBLEMACs[agentName]){
+      this.lastAgentBLEMACs[agentName].push(address);
+
+    }
+    else{
+      this.lastAgentBLEMACs[agentName] = [];
+      this.lastAgentBLEMACs[agentName].push(address);
+    }
+    
+   
     
   }
 
@@ -155,61 +266,10 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     
   }
 
-  public addAgent(longitude: number, latitude: number, radiusRssi: number, popupText: string) {
-    
-    const radius = radiusRssi; // Radio en metros
-    const center = [longitude, latitude]; // Centro del mapa
   
-    
-    // Crear los datos de origen del círculo
-
-    let sphereData = {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: center
-      },
-      properties: {
-        radius: radius
-      }
-    };
-    
-    this.map.addSource("sphere", {
-      type: "geojson",
-      data: {
-        type: "FeatureCollection",
-        features: [sphereData]
-      }
-    });
-
-    // Agregar la capa de círculo para dibujar la esfera
-    this.map.addLayer({
-      id: "sphere-layer",
-      type: "circle",
-      source: "sphere",
-      paint: {
-        "circle-color": "transparent", // Color de la esfera
-        "circle-opacity": 0.5, // Opacidad de la esfera
-        "circle-stroke-color": "#ff0000", // Color del borde rojo
-        "circle-stroke-width": 2, // Ancho del borde
-        "circle-radius": {
-          property: "radius",
-          type: "exponential",
-          stops: [
-            [0, 0],
-            [20, radius * 2] // Escala de radio en función del zoom
-          ]
-        }
-      }
-    });
-  }
   
-  public addDevice(longitude: number, latitude: number, popupText: string) {
-    const marker = new Marker({color: 'red'})
-      .setLngLat([longitude, latitude])
-      .setPopup(new Popup().setHTML(popupText))
-      .addTo(this.map);
-  }
+
+
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

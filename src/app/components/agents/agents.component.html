@@ -10,7 +10,7 @@
   <label class="checkbox-label">
     <input type="checkbox" name="item" [value]="agent.name" [(ngModel)]="selectedItems[i]" (ngModelChange)="onCheckboxChange(agent.name,i)">
     <span class="checkbox-name">{{ agent.name }}</span>
-    <span class="checkbox-status" [class.active]="agent.active"></span>
+    <span class="checkbox-status" [class.active]="agent.active" [class.inactive]="!agent.active"></span>
   </label>
 </div>
 
