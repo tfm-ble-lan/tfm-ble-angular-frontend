@@ -92,6 +92,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       this.agentMarker[selection.agentName].remove();
 
       this.lastAgentBLEMACs[selection.agentName].forEach((mac) => {
+        this.map.removeLayer(`${mac}-label-layer`);
         this.map.removeLayer(`${mac}-sphere-layer`);
         this.map.removeSource(mac);
       });
@@ -105,7 +106,6 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     const selectedBleDevices = selection.bleDevices;
     let longitude: number;
     let latitude: number;
-    
     // Iterar sobre cada objeto BleDevice y obtener la longitud de su agente_localization
     selectedBleDevices.forEach(device => {
       // Obtener el primer objeto Detection del arreglo detections
@@ -113,6 +113,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       // Obtener la longitud del objeto agent_localization
       longitude = firstDetection.agent_localization.longitude;
       latitude = firstDetection.agent_localization.latitude;
+      
       console.log(`El agente ${selection.agentName} esta en ${longitude} ${latitude}`);
     });
     //Pinto el Agente
@@ -140,7 +141,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     this.selectedBleDevices[this.selectedAgent].forEach(device => {
       // Obtener el primer objeto Detection del arreglo detections
       device.detections.forEach(detection => {
-        this.drawBleDevice(device.address, this.selectedAgent, longitude, latitude, detection.rssi)
+        this.drawBleDevice(device.address, this.selectedAgent, longitude, latitude, detection.rssi, device.certified)
         console.log(`El BleDevice ${device.address} esta a ${detection.rssi}`);  
       });
       // Obtener la longitud del objeto agent_localization
@@ -148,9 +149,15 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   }
 
   // Método para dibujar un círculo en el mapa
-  drawBleDevice(address:string, agentName: string, longitude: number, latitude: number, radius: number) {
+  drawBleDevice(address:string, agentName: string, longitude: number, 
+    latitude: number, radius: number, certified: boolean) {
     const center = [longitude, latitude]; // Centro del mapa
     // Crear los datos de origen del círculo
+    let border_color_green = '#006B3C';
+    let border_color = "#ff0000"
+    if (certified) {
+      border_color = border_color_green;
+    }
 
     let sphereData = {
       type: "Feature",
@@ -159,7 +166,8 @@ export class MyMapComponent implements OnInit, AfterViewInit {
         coordinates: center
       },
       properties: {
-        radius: Math.abs(radius)
+        radius: Math.abs(radius),
+        text: address
       }
     };
     
@@ -171,6 +179,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       }
     });
 
+
     // Agregar la capa de círculo para dibujar la esfera
     this.map.addLayer({
       id: `${address}-sphere-layer`,
@@ -179,16 +188,25 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       paint: {
         "circle-color": "transparent", // Color de la esfera
         "circle-opacity": 0.5, // Opacidad de la esfera
-        "circle-stroke-color": "#ff0000", // Color del borde rojo
+        "circle-stroke-color": border_color, // Color del borde rojo
         "circle-stroke-width": 2, // Ancho del borde
-        "circle-radius": {
-          property: "radius",
-          type: "exponential",
-          stops: [
-            [0, 0],
-            [20, Math.abs(radius) * 2] // Escala de radio en función del zoom
-          ]
-        }
+        "circle-radius": Math.abs(radius) * 2 // Escala de radio en función del zoom
+      }
+    });
+
+    // Agregar la capa de texto para mostrar la etiqueta
+    this.map.addLayer({
+      id: `${address}-label-layer`,
+      type: "symbol",
+      source: address,
+      layout: {
+        "text-field": address, // Obtener el texto a mostrar de la propiedad "label"
+        "text-size": 12,
+        "text-offset": [Math.abs(radius)/8, Math.abs(radius)/8], // Ajustar la posición del texto con respecto al círculo
+        "text-anchor": "top"
+      },
+      paint: {
+        "text-color": "#000000" // Color del texto
       }
     });
 
