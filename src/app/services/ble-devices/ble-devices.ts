@@ -24,7 +24,11 @@ export interface Detection {
   
 export interface BleDevice {
     address: string;
+    bluetooth_address: number;
     certified: boolean;
     detections: Detection[];
     manufacturer: Manufacturer;
+    
+
+
 }

@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import { Map, Marker, LngLat, Popup } from 'maplibre-gl';
 import { MapDrawerService } from 'src/app/services/map-drawer/map-drawer.service';
 import { Subscription } from 'rxjs';
-import { BleDevice } from 'src/app/services/ble-devices/ble-devices';
+import { BleDevice, Detection } from 'src/app/services/ble-devices/ble-devices';
+import { BleDevicesService } from 'src/app/services/ble-devices/ble-devices.service';
 
 interface AgentSelection {
   agentName: string;
@@ -22,6 +23,8 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   agentMarker: {[key: string]: Marker} = {};
   private lastAgentLocations: {[key: string]: {longitude: number, latitude: number}} = {};
   private lastAgentBLEMACs: {[key: string]: string[]} = {};
+
+  @Output() bleDetected = new EventEmitter<{ device:BleDevice, detection:Detection }>();
   
   @ViewChild('map')
   private mapContainer: ElementRef<HTMLElement>;
@@ -37,7 +40,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   private max_distancia_ble = 30;
   private max_value_rssi = 1;
 
-  constructor( private mapService: MapDrawerService) {}
+  constructor( private mapService: MapDrawerService, private bleDeviceService: BleDevicesService) {}
 
   ngOnInit() {
   }
@@ -139,9 +142,11 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   handleBleDevices(longitude: number, latitude: number){
     //Despues pinto los BLEDevices
     this.selectedBleDevices[this.selectedAgent].forEach(device => {
-      // Obtener el primer objeto Detection del arreglo detections
       device.detections.forEach(detection => {
         this.drawBleDevice(device.address, this.selectedAgent, longitude, latitude, detection.rssi, device.certified)
+        
+        //Imprimo en el historico
+        this.bleDeviceService.bleDeviceSelected(device, detection);
         console.log(`El BleDevice ${device.address} esta a ${detection.rssi}`);  
       });
       // Obtener la longitud del objeto agent_localization
@@ -220,10 +225,14 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       this.lastAgentBLEMACs[agentName] = [];
       this.lastAgentBLEMACs[agentName].push(address);
     }
-    
-   
-    
   }
+
+  addHistoricalBleDevice(device: BleDevice, detection: Detection) {
+    // Lógica para detectar BLE y obtener sus parámetros
+    
+    this.bleDetected.emit({device, detection}); // Emitir el evento con los parámetros del BLE detectado
+  }
+
 
   private rssiToMetersBasica(rssi: number): number{
 

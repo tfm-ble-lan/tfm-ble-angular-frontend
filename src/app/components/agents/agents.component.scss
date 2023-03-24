@@ -1,3 +1,71 @@
+.agents-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.agents-table th,
+.agents-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.agents-table th:first-child,
+.agents-table td:first-child {
+  width: 1%;
+  white-space: nowrap;
+  padding-right: 10px;
+}
+
+.agents-table td {
+  vertical-align: middle;
+}
+
+.agents-table tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+.agents-table thead {
+  background-color: #ddd;
+}
+
+.agents-table th {
+  font-weight: bold;
+  text-align: left;
+}
+
+.checkbox-status {
+  display: inline-block;
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10em; /* Ajusta este valor para cambiar la distancia del checkbox-status */
+  
+  &:before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.active:before {
+    background-color: green;
+  }
+
+  &.inactive:before {
+    background-color: red;
+  }
+}
+
+
+
 .checkbox-label {
     display: flex;
     align-items: center;
@@ -19,7 +87,7 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      margin-right: 50em; /* Ajusta este valor para cambiar la distancia del checkbox-status */
+      margin-right: 10em; /* Ajusta este valor para cambiar la distancia del checkbox-status */
     
       &:before {
         content: "";
@@ -42,4 +110,33 @@
       }
     }
   }
+
+h3 {
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
   
+
+div {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 2px 2px #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}

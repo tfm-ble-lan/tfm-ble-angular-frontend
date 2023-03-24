@@ -1,17 +1,21 @@
-<h3 style="text-align:left;">Seleccione los agentes que desea consultar</h3>
-<div>
-  <label class="checkbox-label">
-      <label type="checkbox"></label>
-      <label class="checkbox-name">Nombre Del Agente</label>
-      <label class="checkbox-status">Activo</label>
-    </label>
-</div>
-<div *ngFor="let agent of agents; let i = index">
-  <label class="checkbox-label">
-    <input type="checkbox" name="item" [value]="agent.name" [(ngModel)]="selectedItems[i]" (ngModelChange)="onCheckboxChange(agent.name,i)">
-    <span class="checkbox-name">{{ agent.name }}</span>
-    <span class="checkbox-status" [class.active]="agent.active" [class.inactive]="!agent.active"></span>
-  </label>
-</div>
+
+<h3 style="text-align:left;">Aqui puedes seleccionar agentes</h3>
+<table class="agents-table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Nombre del Agente</th>
+      <th>Activo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let agent of agents; let i = index">
+      <td><input type="checkbox" name="item" [value]="agent.name" [(ngModel)]="selectedItems[i]" (ngModelChange)="onCheckboxChange(agent.name,i)"></td>
+      <td>{{ agent.name }}</td>
+      <td class="centered"><span class="checkbox-status" [class.active]="agent.active" [class.inactive]="!agent.active"></span></td>
+    </tr>
+  </tbody>
+</table>
 
 <button (click)="refreshAgents()">Refrescar Agentes</button>
+

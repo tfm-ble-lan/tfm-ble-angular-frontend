@@ -1,0 +1,30 @@
+<h3 style="text-align:center;">Aqui puedes ir viendo los dispositivos ble detectados en los agentes seleccionados</h3>
+<div class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Dirección MAC</th>
+            <th>Dirección BT</th>
+            <th>¿Es Conocido?</th>
+            <th>Detectado por</th>
+            <th>RSSI</th>
+            <th>Fabricante</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let ble of bleDetectados">
+            <td>{{ formatTimestampDate(ble.detection.timestamp) }}</td>
+            <td>{{ formatTimestampTime(ble.detection.timestamp) }}</td> 
+            <td>{{ ble.device.address }}</td>
+            <td>{{ ble.device.bluetooth_address }}</td>
+            <td class="centered"><span class="checkbox-status" [class.active]="ble.device.certified" [class.inactive]="!ble.device.certified"></span></td>
+            <td>{{ ble.detection.detected_by_agent }}</td>
+            <td>{{ ble.detection.rssi }}</td>
+            <td>{{ ble.device.manufacturer.name }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

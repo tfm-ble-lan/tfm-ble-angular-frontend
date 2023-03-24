@@ -3,8 +3,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { BleDevice,Detection,Localization,BleDevicesResponse } from './ble-devices';
+
+
+interface BLEDeviceSelection {
+  device: BleDevice;
+  detection: Detection;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +20,17 @@ import { BleDevice,Detection,Localization,BleDevicesResponse } from './ble-devic
 export class BleDevicesService {
 
   private baseUrl = "http://192.168.0.16:5000/api"
-
+  
+  private bleDeviceSelectedSource = new Subject<BLEDeviceSelection>();
+  
+  bleDeviceSelected$ = this.bleDeviceSelectedSource.asObservable();
+  
   constructor(private http:HttpClient) { }
+
+  bleDeviceSelected(device: BleDevice, detection: Detection) {
+    const selection: BLEDeviceSelection = { device, detection };
+    this.bleDeviceSelectedSource.next(selection);
+  }
 
   getLastDetectionByAgent(agent_name: string): Observable<BleDevice[]> {
     
