@@ -7,15 +7,24 @@ export interface Localization {
     longitude: number;
 }
   
+
+export interface Manufacturer {
+    id: number;
+    name: string;
+}
+  
+
 export interface Detection {
     timestamp: number;
     rssi: number;
+    tx_power: number;
     detected_by_agent: string;
     agent_localization: Localization;
 }
   
 export interface BleDevice {
-    mac: string;
+    address: string;
     certified: boolean;
     detections: Detection[];
+    manufacturer: Manufacturer;
 }

@@ -5,28 +5,35 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Agent, AgentResponse } from "./agent"
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AgentsService {
-  private baseUrl = "http://192.168.0.16:5000/api"
-
+  private baseUrl = `http://192.168.0.16:5000/api`
+  //private baseUrl = process.env.NG_APP_BLE_API_URL;
   constructor(private http:HttpClient) { }
+
+  private getHeaders(): HttpHeaders {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'X-API-KEY': "582K1D9FS-B2bFjfUbUf0w"
+    });
+    return headers;
+  }
 
   getAgents(): Observable<Agent[]> {
     
-    let header = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'X-API-KEY': '582K1D9FS-B2bFjfUbUf0w'
-    });
+    let header = this.getHeaders();
     
     return this.http.get<AgentResponse>(`${this.baseUrl}/agent`, {
       headers:header
     }).pipe( 
       map(response => response.agent),
-      map(agents => agents.map(agent => ({ active: agent.active, name: agent.name })))      
+      map(agents => agents.map(agent => ({ active: agent.active, name: agent.name, 
+        api_key: agent.api_key, bt_address: agent.bt_address })))      
 
     );
   }

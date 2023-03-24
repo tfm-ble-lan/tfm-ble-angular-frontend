@@ -14,11 +14,19 @@ interface AgentSelection {
 export class MapDrawerService {
 
   private agentSelectedSource = new Subject<AgentSelection>();
+  private agentUnselectedSource = new Subject<AgentSelection>();
 
   agentSelected$ = this.agentSelectedSource.asObservable();
+  agentUnselected$ = this.agentUnselectedSource.asObservable();
 
   agentSelected(agentName: string, bleDevices: BleDevice[]) {
     const selection: AgentSelection = { agentName, bleDevices };
     this.agentSelectedSource.next(selection);
+  }
+
+
+  agentUnselected(agentName: string, bleDevices: BleDevice[]) {
+    const selection: AgentSelection = { agentName, bleDevices };
+    this.agentUnselectedSource.next(selection);
   }
 }
