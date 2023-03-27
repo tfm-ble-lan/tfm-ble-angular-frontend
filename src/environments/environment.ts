@@ -5,8 +5,8 @@
 
 export const environment: Environment = {
   production: false,
-  apiUrl: process.env.NG_APP_BLE_API_URL ,
-  apiKey: process.env.NG_APP_ADMIN_API_KEY || '582K1D9FS-B2bFjfUbUf0w',
+  apiUrl: process.env.NG_APP_BLE_API_URL || {{API_URL}},
+  apiKey: process.env.NG_APP_ADMIN_API_KEY || {{API_KEY}},
 };
 
 /*

@@ -18,11 +18,19 @@ COPY . /app
 
 WORKDIR /app/
 RUN npm install --save-dev
-RUN  npm install -g @angular/cli
-WORKDIR  /app/angular-based-project/
+RUN npm install -g @angular/cli
+# WORKDIR  /app/angular-based-project/
 
 # Install MapLibre GL
 RUN npm install maplibre-gl @types/maplibre-gl
 
-ENTRYPOINT ["ng"]
-CMD ["serve", "--port", "80", "--host", "0.0.0.0", "--disable-host-check"]
+# RUN npm link @angular/cli
+# RUN ng update @angular/cli
+
+
+# RUN ng build --configuration production
+
+# ENTRYPOINT ["ng"]
+# CMD ["serve", "--port", "80", "--host", "0.0.0.0", "--disable-host-check"]
+ENTRYPOINT ["sh"]
+CMD ["start.sh", "&"]
