@@ -12,14 +12,15 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class AgentsService {
-  private baseUrl = `http://192.168.0.16:5000/api`
+//   private baseUrl = `http://192.168.0.16:5000/api`
+  private baseUrl = environment.apiUrl
   //private baseUrl = process.env.NG_APP_BLE_API_URL;
   constructor(private http:HttpClient) { }
 
   private getHeaders(): HttpHeaders {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'X-API-KEY': "582K1D9FS-B2bFjfUbUf0w"
+      'X-API-KEY': environment.apiKey
     });
     return headers;
   }

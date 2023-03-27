@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { BleDevice,Detection,Localization,BleDevicesResponse } from './ble-devices';
+import { environment } from 'src/environments/environment';
 
 
 interface BLEDeviceSelection {
@@ -19,7 +20,7 @@ interface BLEDeviceSelection {
 })
 export class BleDevicesService {
 
-  private baseUrl = "http://192.168.0.16:5000/api"
+  private baseUrl = environment.apiUrl
   
   private bleDeviceSelectedSource = new Subject<BLEDeviceSelection>();
   
@@ -36,7 +37,7 @@ export class BleDevicesService {
     
     let header = new HttpHeaders({
       'Content-Type': 'application/json',
-      'X-API-KEY': '582K1D9FS-B2bFjfUbUf0w'
+      'X-API-KEY': environment.apiKey
     });
     
     return this.http.get<BleDevicesResponse>(`${this.baseUrl}/ble/last_detection_by_agent/${agent_name}`, {
