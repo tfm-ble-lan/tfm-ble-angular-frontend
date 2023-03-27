@@ -31,7 +31,6 @@ export class AgentsComponent implements OnInit {
   }
   
   onCheckboxChange(agentName: string, index: number): void {
-    //this.selectedItems[index] = !this.selectedItems[index];
     if (this.selectedItems[index]) {
       console.log('Item selecccionado')
       this.agentBleDevices[agentName] = [];

@@ -13,6 +13,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { FormularioComponent } from './components/formulario/formulario.component';
 import { AgentsComponent } from './components/agents/agents.component';
 import { BleDevicesComponent } from './components/ble-devices/ble-devices/ble-devices.component';
+import { HistoricoBlesComponent } from './components/historico-bles/historico-bles/historico-bles.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { BleDevicesComponent } from './components/ble-devices/ble-devices/ble-de
     MenuComponent,
     FormularioComponent,
     AgentsComponent,
-    BleDevicesComponent
+    BleDevicesComponent,
+    HistoricoBlesComponent
   ],
   imports: [
     BrowserModule,
