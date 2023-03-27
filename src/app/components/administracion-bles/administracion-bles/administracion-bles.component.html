@@ -1,49 +1,50 @@
 <app-menu></app-menu>
 <div class="container">
     <div class="row">
-        <div *ngFor="let detector of detectors">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">{{ detector }}</h5>
-              </div>
-              <div class="card-body">
-                <div *ngFor="let device of getBleDevicesByAgent(detector)">
-                  <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                      <h6 class="card-subtitle mb-2 text-muted">{{ device.address }} ({{ device.manufacturer?.name ?? 'desconocido' }})</h6>
-                      <button (click)="certificarDispositivo(device)" class="btn btn-primary">Certificar</button>
-                    </div>
-                    <div class="card-body">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Direccion BT</th>
-                            <th>RSSI</th>
-                            <th>TX Power</th>
-                            <th>Certificado</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let detection of getBleDevicesDetectionsByAgent(detector, device)">
-                            <td>{{ formatTimestampDate(detection.timestamp) }}</td>
-                            <td>{{ formatTimestampTime(detection.timestamp) }}</td>
-                            <td>{{ device.bluetooth_address }}</td>
-                            <td>{{ detection.rssi }}</td>
-                            <td>{{ detection.tx_power }}</td>
-                            <td><span class="checkbox-status" [class.active]="device.certified" [class.inactive]="!device.certified"></span></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <hr style="border-top: 1px solid #dee2e6; margin-top: 1rem;">
-                    </div>
+      <div *ngFor="let detector of detectors">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center" (click)="isCollapsed = !isCollapsed">
+            <h5 class="card-title">{{ detector }}</h5>
+            <button class="btn btn-link" (click)="toggleDetectionSection(detector)">{{ detectionSectionCollapsed[detector] ? 'Expadir': 'Colapsar' }}</button>
+          </div>
+          <div [ngbCollapse]="isCollapsed">
+            <div class="card-body">
+              <div *ngFor="let device of getBleDevicesByAgent(detector)">
+                <div class="card" [hidden]="detectionSectionCollapsed[detector]">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle mb-2 text-muted">{{ device.address }} ({{ device.manufacturer?.name ?? 'desconocido' }})</h6>
+                    <button (click)="certificarDispositivo(device)" class="btn btn-primary">Certificar</button>
+                  </div>
+                  <div class="card-body">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Hora</th>
+                          <th>Direccion BT</th>
+                          <th>RSSI</th>
+                          <th>TX Power</th>
+                          <th>Certificado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let detection of getBleDevicesDetectionsByAgent(detector, device)">
+                          <td>{{ formatTimestampDate(detection.timestamp) }}</td>
+                          <td>{{ formatTimestampTime(detection.timestamp) }}</td>
+                          <td>{{ device.bluetooth_address }}</td>
+                          <td>{{ detection.rssi }}</td>
+                          <td>{{ detection.tx_power }}</td>
+                          <td><span class="checkbox-status" [class.active]="device.certified" [class.inactive]="!device.certified"></span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <hr style="border-top: 1px solid #dee2e6; margin-top: 1rem;">
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+        </div>
+      </div>
     </div>
   </div>
-  

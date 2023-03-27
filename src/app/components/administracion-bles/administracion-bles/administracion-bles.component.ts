@@ -11,6 +11,7 @@ export class AdministracionBlesComponent implements OnInit {
   bleDevicesByAgent: {[key: string]: BleDevice[]} = {};
   devices: BleDevice[];
   detectors: string[];
+  detectionSectionCollapsed: { [key: string]: boolean } = {};
   
   constructor(private bleDevicesService: BleDevicesService) { }
 
@@ -83,6 +84,10 @@ export class AdministracionBlesComponent implements OnInit {
         // Aquí puedes manejar el error de la petición `PUT`.
       }
     );
+  }
+
+  toggleDetectionSection(detector: string) {
+    this.detectionSectionCollapsed[detector] = !this.detectionSectionCollapsed[detector];
   }
 
 

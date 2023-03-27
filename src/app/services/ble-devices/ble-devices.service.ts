@@ -175,7 +175,7 @@ export class BleDevicesService {
   certificarBleDevice(bleDevice: BleDevice){
     let header = this.getHeaders();
     bleDevice.certified = true;
-    return this.http.put(`${this.baseUrl}/ble/`, { "devices": [bleDevice] }, { headers: header });
+    return this.http.put(`${this.baseUrl}/ble/certificate_ble_device`, { "devices": [bleDevice] }, { headers: header });
   }
 
 
