@@ -20,7 +20,7 @@ interface BLEDeviceSelection {
 })
 export class BleDevicesService {
 
-  private baseUrl = environment.apiUrl
+  private baseUrl = environment.apiUrl;
   
   private bleDeviceSelectedSource = new Subject<BLEDeviceSelection>();
   
