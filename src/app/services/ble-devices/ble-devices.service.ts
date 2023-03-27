@@ -5,6 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { BleDevice,Detection,Localization,BleDevicesResponse } from './ble-devices';
+import { environment } from 'src/environments/environment';
 
 
 interface BLEDeviceSelection {
@@ -18,8 +19,6 @@ interface BLEDeviceSelection {
 })
 export class BleDevicesService {
 
-  private baseUrl = "http://192.168.0.16:5000/api";
-
   private getHeaders(): HttpHeaders {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -27,6 +26,9 @@ export class BleDevicesService {
     });
     return headers;
   }
+
+  private baseUrl = environment.apiUrl
+
   
   private bleDeviceSelectedSource = new Subject<BLEDeviceSelection>();
   
@@ -42,6 +44,7 @@ export class BleDevicesService {
   getLastDetectionByAgent(agent_name: string): Observable<BleDevice[]> {
     
     let header = this.getHeaders();
+
     
     return this.http.get<BleDevicesResponse>(`${this.baseUrl}/ble/last_detection_by_agent/${agent_name}`, {
       headers:header
