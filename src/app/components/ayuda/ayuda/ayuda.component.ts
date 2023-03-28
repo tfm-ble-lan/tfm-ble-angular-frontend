@@ -7,9 +7,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AyudaComponent implements OnInit {
 
+  activeInfo = '';
+  
   constructor() { }
 
   ngOnInit(): void {
   }
+  
+  showFAQInfo() {
+    this.activeInfo = 'faq';
+  }
 
+  showTermsInfo() {
+    this.activeInfo = 'terms';
+  }
+
+  showPrivacyInfo() {
+    this.activeInfo = 'privacy';
+  }
 }
+
+

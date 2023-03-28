@@ -11,11 +11,16 @@
   <tbody>
     <tr *ngFor="let agent of agents; let i = index">
       <td><input type="checkbox" name="item" [value]="agent.name" [(ngModel)]="selectedItems[i]" (ngModelChange)="onCheckboxChange(agent.name,i)"></td>
-      <td>{{ agent.name }}</td>
+      <td (click)="centrarMapa(agent.name)">{{ agent.name }}</td>
       <td class="centered"><span class="checkbox-status" [class.active]="agent.active" [class.inactive]="!agent.active"></span></td>
     </tr>
   </tbody>
 </table>
 
-<button (click)="refreshAgents()">Refrescar Agentes</button>
-
+<div class="d-flex justify-content-center flex-column align-items-center mt-3">
+  <button class="btn btn-primary" (click)="refreshAgents()">Refrescar Agentes</button>
+  <div class="customdiv form-check mt-2 btn-checkbox">
+    <input class="form-check-input" type="checkbox" id="auto-refresh" name="auto-refresh" [(ngModel)]="autoRefresh" (ngModelChange)="toggleAutoRefresh()">
+    <label class="form-check-label" for="auto-refresh">Automático</label>
+  </div>
+</div>
