@@ -7,7 +7,7 @@
           <div class="card card-help">
             <div class="card-body">
               <h2 class="card-title">Versión</h2>
-              <p class="card-text">La versión actual de nuestra aplicación es 1.0.1</p>
+              <p class="card-text">BLE Scanner 1.0.1</p>
             </div>
           </div>
         </div>
@@ -41,7 +41,7 @@
             <div class="card-body">
               <h2 class="card-title">Preguntas frecuentes</h2>
               <p class="card-text">Consulta nuestras preguntas frecuentes para obtener ayuda adicional.</p>
-              <a href="#" class="btn btn-primary">Ir a preguntas frecuentes</a>
+              <button class="btn btn-primary" (click)="showFAQInfo()">Ir a preguntas frecuentes</button>
             </div>
           </div>
         </div>
@@ -51,7 +51,7 @@
             <div class="card-body">
               <h2 class="card-title">Términos y condiciones</h2>
               <p class="card-text">Lee nuestros términos y condiciones para conocer las reglas de uso de nuestra aplicación.</p>
-              <a href="#" class="btn btn-primary">Ir a términos y condiciones</a>
+              <button class="btn btn-primary" (click)="showTermsInfo()">Ir a términos y condiciones</button>
             </div>
           </div>
         </div>
@@ -61,7 +61,7 @@
             <div class="card-body">
               <h2 class="card-title">Política de privacidad</h2>
               <p class="card-text">Lee nuestra política de privacidad para conocer cómo protegemos tu información personal.</p>
-              <a href="#" class="btn btn-primary">Ir a política de privacidad</a>
+              <button class="btn btn-primary" (click)="showPrivacyInfo()">Ir a política de privacidad</button>
             </div>
           </div>
         </div>
@@ -69,3 +69,62 @@
     </div>
   </section>
   
+  <section class="section-help-info bg-light">
+    <div class="container-fluid">
+      <div *ngIf="activeInfo === 'faq'" class="info-card" id="faq-info">
+        <div class="card-body">
+          <h2>Algo de información básica</h2>
+          <p>Aquí puedes agregar tu contenido.</p>
+        </div>
+      </div>
+      <div *ngIf="activeInfo === 'terms'" class="info-card" id="terms-info">
+        <div class="card-body">
+          <h1>Términos y condiciones</h1>
+          <br/>
+          <p>Por favor, lea detenidamente estos términos y condiciones antes de utilizar BLE Scanner. Al acceder o utilizar el sitio, acepta estar sujeto a estos términos y condiciones. Si no está de acuerdo con ellos, no utilice el sitio.</p>
+          
+          <h2>Licencia Apache</h2>
+          <p>Este software está bajo la Licencia Apache, Versión 2.0 (la "Licencia"); usted puede obtener una copia de la Licencia en http://www.apache.org/licenses/LICENSE-2.0.</p>
+          <p>A menos que lo exija la ley aplicable o se acuerde por escrito, el software distribuido bajo la Licencia se distribuye "TAL CUAL", SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ya sea expresa o implícita. Véase la Licencia para obtener el idioma específico que rige los permisos y limitaciones en la Licencia.</p>
+          
+          <h2>Limitaciones de responsabilidad</h2>
+          <p>En ningún caso seremos responsables ante usted o ante cualquier tercero por cualquier daño directo, indirecto, incidental, especial, punitivo o consecuencial que surja de su uso o imposibilidad de uso de BLE Scanner, incluso si hemos sido informados de la posibilidad de dichos daños. </p>
+          
+          <h2>Cambios en los términos y condiciones</h2>
+          <p>Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Le recomendamos que revise periódicamente esta página para mantenerse informado sobre las actualizaciones.</p>
+          
+          <h2>Contacto</h2>
+          <p>Si tiene preguntas o inquietudes acerca de estos términos y condiciones, no dude en ponerse en contacto con nosotros a través de [insertar correo electrónico o formulario de contacto].</p>
+          
+          <p>Última actualización: 28/03/2023</p>
+
+        </div>
+      </div>
+      <div *ngIf="activeInfo === 'privacy'" class="info-card" id="privacy-info">
+        <div class="card-body">
+          <h1>Política de privacidad de BLE Scanner</h1>
+          <br/>
+  
+          <h2>Recopilación de información</h2>
+          <p>BLE Scanner es un sistema que localiza dispositivos BLE dentro de una organización. No recopilamos ni almacenamos información personal de ningún tipo, incluyendo información de identificación personal, información de contacto o cualquier otra información que pueda utilizarse para identificar a una persona.</p>
+          
+          <h2>Utilización de información</h2>
+          <p>La información recopilada por BLE Scanner se utiliza únicamente para fines de visualización de dispositivos BLE en un mapa y para su posible certificación. No compartimos esta información con terceros ni la utilizamos para ningún otro fin.</p>
+          
+          <h2>Seguridad de la información</h2>
+          <p>BLE Scanner utiliza medidas de seguridad técnicas y organizativas para proteger la información que recopilamos contra el acceso no autorizado, la divulgación y el uso indebido. A pesar de que tomamos medidas razonables para proteger la información, no podemos garantizar la seguridad de la información que se transmite a través de Internet.</p>
+          
+          <h2>Uso de cookies</h2>
+          <p>Actualmente, BLE Scanner no utiliza cookies. No obstante, en el futuro, podríamos utilizar cookies para el acceso identificado, conectándose con el LDAP de la organización. En caso de que se utilicen cookies, se le informará en esta política de privacidad.</p>
+          
+          <h2>Cambios en la política de privacidad</h2>
+          <p>Nos reservamos el derecho de modificar esta política de privacidad en cualquier momento. Le recomendamos que revise periódicamente esta página para mantenerse informado sobre las actualizaciones.</p>
+          
+          <h2>Contacto</h2>
+          <p>Si tiene preguntas o inquietudes acerca de nuestra política de privacidad, no dude en ponerse en contacto con nosotros a través de [insertar correo electrónico o formulario de contacto].</p>
+          
+          <p>Última actualización: 28/03/2023</p>
+        </div>
+      </div>
+    </div>
+  </section>

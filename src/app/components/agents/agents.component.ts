@@ -15,6 +15,8 @@ export class AgentsComponent implements OnInit {
   ble_devices: BleDevice[] = [];
   selectedItems: boolean[];
   agentBleDevices: {[key: string]: BleDevice[]} = {};
+  autoRefresh: boolean = false;
+  intervalId: any;
 
   constructor(
     private agentsService: AgentsService, 
@@ -76,4 +78,20 @@ export class AgentsComponent implements OnInit {
       });
     }
   }
+
+  centrarMapa(agentName:string):void{
+    console.log("POR AQUI VOY, AL PULSAR DEBE IR A LA ZONA DEL MAPA DONDE ESTA EL AGENTE")
+  }
+ 
+  
+  toggleAutoRefresh() {
+    if (this.autoRefresh) {
+      this.intervalId = setInterval(() => {
+        this.refreshAgents();
+      }, 10000);
+    } else {
+      clearInterval(this.intervalId);
+    }
+  }
+
 }
