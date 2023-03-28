@@ -14,6 +14,11 @@ import { FormularioComponent } from './components/formulario/formulario.componen
 import { AgentsComponent } from './components/agents/agents.component';
 import { BleDevicesComponent } from './components/ble-devices/ble-devices/ble-devices.component';
 import { HistoricoBlesComponent } from './components/historico-bles/historico-bles/historico-bles.component';
+import { LoginComponent } from './components/login/login/login.component';
+import { AyudaComponent } from './components/ayuda/ayuda/ayuda.component';
+import { AdministracionAgentesComponent } from './components/administracion-agentes/administracion-agentes/administracion-agentes.component';
+import { AdministracionBlesComponent } from './components/administracion-bles/administracion-bles/administracion-bles.component';
+
 
 @NgModule({
   declarations: [
@@ -23,7 +28,11 @@ import { HistoricoBlesComponent } from './components/historico-bles/historico-bl
     FormularioComponent,
     AgentsComponent,
     BleDevicesComponent,
-    HistoricoBlesComponent
+    HistoricoBlesComponent,
+    LoginComponent,
+    AyudaComponent,
+    AdministracionAgentesComponent,
+    AdministracionBlesComponent,
   ],
   imports: [
     BrowserModule,

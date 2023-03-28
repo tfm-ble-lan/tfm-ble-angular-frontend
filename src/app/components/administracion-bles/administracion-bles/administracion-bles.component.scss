@@ -1,0 +1,35 @@
+.checkbox-status {
+    display: inline-block;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    
+    
+    &:before {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+  
+    &.active:before {
+      background-color: green;
+    }
+  
+    &.inactive:before {
+      background-color: red;
+    }
+  }
+  
+
+  .btn-link {
+    color: #007bff;
+    text-decoration: none;
+  }
+  

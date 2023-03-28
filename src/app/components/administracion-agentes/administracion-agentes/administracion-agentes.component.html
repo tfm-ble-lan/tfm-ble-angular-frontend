@@ -1,0 +1,19 @@
+<app-menu></app-menu>
+<br/>
+<div class="container">
+    <div class="row">
+      <div class="col-lg-4 col-md-6 col-sm-12" *ngFor="let agent of agents">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ agent.name }}</h5>
+            <p class="card-text">Activo: {{ agent.active ? 'Sí' : 'No' }}</p>
+            <p class="card-text">API Key: {{ agent.api_key }}</p>
+            <p class="card-text">Dirección Bluetooth: {{ agent.bt_address }}</p>
+            <button class="btn btn-primary" (click)="toggleActive(agent)">
+              {{ agent.active ? 'Desactivar' : 'Activar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
