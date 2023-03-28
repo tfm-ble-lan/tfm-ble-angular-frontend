@@ -22,12 +22,12 @@ export class BleDevicesService {
   private getHeaders(): HttpHeaders {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'X-API-KEY': "582K1D9FS-B2bFjfUbUf0w"
+      'X-API-KEY': environment.apiKey
     });
     return headers;
   }
 
-  private baseUrl = environment.apiUrl
+  private baseUrl = environment.apiUrl;
 
   
   private bleDeviceSelectedSource = new Subject<BLEDeviceSelection>();
