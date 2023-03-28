@@ -6,6 +6,7 @@ import { LoginComponent } from './components/login/login/login.component';
 import { AyudaComponent } from './components/ayuda/ayuda/ayuda.component';
 import { AdministracionAgentesComponent } from './components/administracion-agentes/administracion-agentes/administracion-agentes.component';
 import { AdministracionBlesComponent } from './components/administracion-bles/administracion-bles/administracion-bles.component';
+import { LocalizadorComponent } from './components/localizador/localizador/localizador.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' }, 
@@ -14,9 +15,8 @@ const routes: Routes = [
   { path: 'ayuda', component: AyudaComponent },
   { path: 'administracion/agentes', component: AdministracionAgentesComponent },
   { path: 'administracion/bles', component: AdministracionBlesComponent },
-  
-
-];
+  { path: 'localizador', component: LocalizadorComponent }
+  ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],

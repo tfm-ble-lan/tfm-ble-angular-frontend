@@ -75,6 +75,13 @@ export class AdministracionBlesComponent implements OnInit {
     return `${hours}:${minutes}:${seconds}`;
   }
 
+  public formatCoordenadas(coordenada: number): string {
+    const grados = Math.floor(coordenada);
+    const minutos = Math.floor((coordenada - grados) * 60);
+    const segundos = ((coordenada - grados - minutos / 60) * 3600).toFixed(2);
+    return `${grados}° ${minutos}' ${segundos}"`;
+  }
+
   certificarDispositivo(device: BleDevice){
     this.bleDevicesService.certificarBleDevice(device).subscribe(
       (response) => {

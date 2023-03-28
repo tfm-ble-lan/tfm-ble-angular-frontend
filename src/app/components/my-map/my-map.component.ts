@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, EventEmitter, 
 import { Map, Marker, LngLat, Popup } from 'maplibre-gl';
 import { MapDrawerService } from 'src/app/services/map-drawer/map-drawer.service';
 import { Subscription } from 'rxjs';
-import { BleDevice, Detection } from 'src/app/services/ble-devices/ble-devices';
+import { BleDevice, Detection, Localization } from 'src/app/services/ble-devices/ble-devices';
 import { BleDevicesService } from 'src/app/services/ble-devices/ble-devices.service';
+
 
 interface AgentSelection {
   agentName: string;
@@ -18,6 +19,7 @@ interface AgentSelection {
 export class MyMapComponent implements OnInit, AfterViewInit {
   
   subscription: Subscription;
+  subscription2: Subscription;
   selectedAgent: string;
   selectedBleDevices: {[key: string]: BleDevice[]} = {};
   agentMarker: {[key: string]: Marker} = {};
@@ -43,6 +45,8 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   constructor( private mapService: MapDrawerService, private bleDeviceService: BleDevicesService) {}
 
   ngOnInit() {
+
+    
   }
 
   ngAfterViewInit() {
@@ -80,15 +84,35 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       }
     );
 
-    /* Agregar marcadores para las últimas ubicaciones de los agentes
-    for (const agentName in this.lastAgentLocations) {
-      if (this.lastAgentLocations.hasOwnProperty(agentName)) {
-        const { longitude, latitude } = this.lastAgentLocations[agentName];
-        this.addMarker(longitude, latitude);
+    // Centrar las coordenadas
+    this.subscription2 = this.mapService.centerMap$.subscribe(
+      (selection: Localization) => {
+        this.updateMapCenter(selection.longitude, selection.latitude)
       }
-    }*/
+    );
+   
+    this.map.on('load', () => {
+      console.log("map loaded");
+      // Suscribirse a eventos después de que el mapa se haya cargado
+      this.map.on('zoomend', () => {
+        console.log("zoom")
+        this.updateCircles();
+      });
+    });
      
   }
+
+  updateCircles() {
+
+    Object.keys(this.agentMarker).forEach(key => {
+      const agent: AgentSelection = { agentName: key, bleDevices: this.selectedBleDevices[key]}
+      this.handleAgentUnselection(agent);
+      this.handleAgentSelection(agent);
+      console.log(key);
+    });
+    // Código para actualizar los círculos en el mapa
+  }
+
   handleAgentUnselection(selection: AgentSelection) {
     if ( this.agentMarker[selection.agentName]){
       this.agentMarker[selection.agentName].setPopup(null);
@@ -143,7 +167,8 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     //Despues pinto los BLEDevices
     this.selectedBleDevices[this.selectedAgent].forEach(device => {
       device.detections.forEach(detection => {
-        this.drawBleDevice(device.address, this.selectedAgent, longitude, latitude, detection.rssi, device.certified)
+        this.drawBleDevice(device.address, this.selectedAgent, longitude, latitude, 
+          this.simplificacionFormulaFris(detection.rssi, detection.tx_power), device.certified)
         
         //Imprimo en el historico
         this.bleDeviceService.bleDeviceSelected(device, detection);
@@ -153,6 +178,16 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Calcula el radio en metros a partir del área en metros cuadrados
+  calculateRadius(radiusInPixels:number):number {
+    return radiusInPixels * Math.pow(2, 21 - 10);
+  }
+
+  metersToPixels(meters: number, zoom: number): number {
+    const earthCircumference = 40075017;
+    const metersPerPixel = earthCircumference * Math.cos(this.map.getCenter().lat * Math.PI / 180) / Math.pow(2, zoom + 8);
+    return meters / metersPerPixel;
+  }
   // Método para dibujar un círculo en el mapa
   drawBleDevice(address:string, agentName: string, longitude: number, 
     latitude: number, radius: number, certified: boolean) {
@@ -171,7 +206,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
         coordinates: center
       },
       properties: {
-        radius: Math.abs(radius),
+        radius: Math.abs(radius / (156543.03392 * Math.cos(this.map.getCenter().lat) / (2**this.map.getZoom()))),
         text: address
       }
     };
@@ -184,7 +219,6 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       }
     });
 
-
     // Agregar la capa de círculo para dibujar la esfera
     this.map.addLayer({
       id: `${address}-sphere-layer`,
@@ -195,10 +229,13 @@ export class MyMapComponent implements OnInit, AfterViewInit {
         "circle-opacity": 0.5, // Opacidad de la esfera
         "circle-stroke-color": border_color, // Color del borde rojo
         "circle-stroke-width": 2, // Ancho del borde
-        "circle-radius": Math.abs(radius) * 2 // Escala de radio en función del zoom
+        "circle-radius":  Math.abs(radius / (156543.03392 * Math.cos(this.map.getCenter().lat) / (2**this.map.getZoom())))
+        
+         // Escala de radio en función del zoom
       }
     });
-
+    
+    console.log(radius);
     // Agregar la capa de texto para mostrar la etiqueta
     this.map.addLayer({
       id: `${address}-label-layer`,
@@ -207,7 +244,10 @@ export class MyMapComponent implements OnInit, AfterViewInit {
       layout: {
         "text-field": address, // Obtener el texto a mostrar de la propiedad "label"
         "text-size": 12,
-        "text-offset": [Math.abs(radius)/8, Math.abs(radius)/8], // Ajustar la posición del texto con respecto al círculo
+        "text-offset": [
+          Math.abs(Math.abs(radius / (156543.03392 * Math.cos(this.map.getCenter().lat) / (2**this.map.getZoom()))))/12, 
+          Math.abs(Math.abs(radius / (156543.03392 * Math.cos(this.map.getCenter().lat) / (2**this.map.getZoom()))))/12
+        ], // Ajustar la posición del texto con respecto al círculo
         "text-anchor": "top"
       },
       paint: {
@@ -234,12 +274,6 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   }
 
 
-  private rssiToMetersBasica(rssi: number): number{
-
-    return (rssi*this.max_distancia_ble)/this.max_value_rssi
-
-  }
-
   /*
   La conversión de RSSI (Received Signal Strength Indicator) a distancia en 
   metros es compleja y depende de muchos factores, como la potencia de transmisión 
@@ -253,10 +287,10 @@ export class MyMapComponent implements OnInit, AfterViewInit {
 
   PR = PT + Gt + Gr - 32.45 - 20*log10(d)
   */ 
-  private formulaFriis(rssi: number): number{
+  private formulaFriis(rssi: number, txPOWER?: number): number{
     // Parámetros de la fórmula
     const frequency = 2400; // Frecuencia en MHz
-    const txPower = -20; // Potencia de transmisión en dBm
+    const txPower = txPOWER ? txPOWER : 9; // Potencia de transmisión en dBm
     const rxSensitivity = -90; // Sensibilidad del receptor en dBm
 
     // Constantes
@@ -269,37 +303,26 @@ export class MyMapComponent implements OnInit, AfterViewInit {
     return distance
   }
 
-  private alernativaformulaFriis(rssi: number, txPower: number): number{
-    // Se define la constante TX_POWER que representa la potencia de transmisión del dispositivo BLE
-    // Esta constante se expresa en dBm y puede variar según el dispositivo
-    const TX_POWER = -59;
-
-    // Función que convierte la señal RSSI a distancia en metros
-    // Recibe como parámetro la señal RSSI en dBm
-    // Retorna la distancia en metros
-    
-    // Se calcula la diferencia entre la potencia de transmisión y la señal RSSI recibida
-    const difference = TX_POWER - rssi;
-    
-    // Se calcula la relación entre la diferencia de potencia y la atenuación de la señal
-    // Se puede estimar que la atenuación es de 2.0 en entornos libres de obstáculos y de 3.0 en entornos urbanos o con obstáculos
-    const ratio = difference / 6.0;
-    
-    // Se calcula la distancia en metros a partir de la relación obtenida
-    // Se utiliza la fórmula: d = 10 ^ ratio
-    const distance = Math.pow(10, ratio);
-    
+  private simplificacionFormulaFris(rssi: number, txPower?: number): number {
+    const txPow = txPower ? txPower : 9;
+    const atenuacion = 8; // 2 para entornos abiertos, 3 para entornos urbanos
+    const ratio = (txPow - rssi) / (10.0*atenuacion); // Ratio de señal a ruido (SNR)
+    const distance = Math.pow(10, ratio); // Distancia en metros
+    console.log("Simplificacion friss: "+distance)
     return distance;
-    
   }
 
   
-  
 
-
+  public updateMapCenter(lng: number, lat: number): void {
+    this.map.setCenter([lng, lat]);
+  }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 }
 
+function getEarthCircumference() {
+  return 40075017;
+}

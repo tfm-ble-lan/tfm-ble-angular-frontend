@@ -23,7 +23,7 @@
             <td class="centered"><span class="checkbox-status" [class.active]="ble.device.certified" [class.inactive]="!ble.device.certified"></span></td>
             <td>{{ ble.detection.detected_by_agent }}</td>
             <td>{{ ble.detection.rssi }}</td>
-            <td>{{ ble.device.manufacturer.name }}</td>
+            <td>{{ ble.device.manufacturer?.name ?? 'desconocido' }}</td> 
         </tr>
         </tbody>
     </table>

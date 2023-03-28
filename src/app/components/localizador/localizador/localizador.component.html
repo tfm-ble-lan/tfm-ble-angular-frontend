@@ -1,0 +1,41 @@
+<app-menu></app-menu>
+<div class="container">
+    <div class="row">
+      <div *ngFor="let detector of detectors">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center" (click)="isCollapsed = !isCollapsed">
+            <h5 class="card-title">{{ detector }}</h5>
+            <button class="btn btn-link" (click)="toggleDetectionSection(detector)">{{ detectionSectionCollapsed[detector] ? 'Expadir': 'Colapsar' }}</button>
+          </div>
+          <div [ngbCollapse]="isCollapsed">
+            <div class="card-body">
+              <div *ngFor="let device of getBleDevicesByAgent(detector)">
+                <div class="card" [hidden]="detectionSectionCollapsed[detector]">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle mb-2 text-muted">{{ device.address }} ({{ device.manufacturer?.name ?? 'desconocido' }})
+                        <span class="checkbox-status" [class.active]="device.certified" [class.inactive]="!device.certified"></span>
+                    </h6>
+                    <button (click)="showCanvas(device.address, detector)" class="btn btn-info">Localizar</button>
+                    </div>
+
+                    <div class="canvas-container" *ngIf="activeInfo === device.address">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div class="card border-0 float-left">
+                            <div class="card-body">
+                              <h5 class="card-title">Localizacion Frio/Caliente BLEs</h5>
+                              <p class="card-text">La X marca el lugar. Si eres el propietario del equipo-agente {{ detector }} coge tu equipo y muevete para encontrarlo. Si el circulo se hace mas pequeño es que te estas acercando, sino...Friiiio (Recuerda que vives en un mundo en 3D por cierto...)</p>
+                            </div>
+                          </div>
+                          <canvas #canvasElem class="canvas-style float-right" width="500" height="500"></canvas>
+                        </div>
+                        <div style="clear:both"></div>
+                      </div>                    
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
