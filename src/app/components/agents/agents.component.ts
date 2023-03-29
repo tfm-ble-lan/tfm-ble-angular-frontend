@@ -62,7 +62,6 @@ export class AgentsComponent implements OnInit {
         console.log('Agents:', agents);
         //Inicilizo los checkbox a falso
         if(!this.selectedItems){
-          console.log('22');
           this.selectedItems = Array(this.agents.length).fill(false);
         }
        },
@@ -79,8 +78,22 @@ export class AgentsComponent implements OnInit {
     }
   }
 
-  centrarMapa(agentName:string):void{
-    console.log("POR AQUI VOY, AL PULSAR DEBE IR A LA ZONA DEL MAPA DONDE ESTA EL AGENTE")
+  centrarMapa(agentName):void{
+    
+    let longitude:number;
+    let latitude: number;
+
+    this.bleDevicesService.getLastDetectionByAgent(agentName).subscribe( 
+      (ble_devices) => {
+        longitude = ble_devices[0].detections[0].agent_localization.longitude;
+        latitude = ble_devices[0].detections[0].agent_localization.latitude;
+        console.log(longitude+" Lon "+latitude+ "Lan")
+        this.mapService.centerMap(longitude, latitude);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
  
   

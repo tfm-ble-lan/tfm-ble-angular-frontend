@@ -21,6 +21,7 @@
                         <tr>
                           <th>Fecha</th>
                           <th>Hora</th>
+                          <th>Cerca de ...</th>
                           <th>Direccion BT</th>
                           <th>RSSI</th>
                           <th>TX Power</th>
@@ -31,6 +32,7 @@
                         <tr *ngFor="let detection of getBleDevicesDetectionsByAgent(detector, device)">
                           <td>{{ formatTimestampDate(detection.timestamp) }}</td>
                           <td>{{ formatTimestampTime(detection.timestamp) }}</td>
+                          <td>{{ formatCoordenadas(detection.agent_localization.longitude) }} Lon, {{ formatCoordenadas(detection.agent_localization.latitude) }} Lat</td>
                           <td>{{ device.bluetooth_address }}</td>
                           <td>{{ detection.rssi }}</td>
                           <td>{{ detection.tx_power }}</td>

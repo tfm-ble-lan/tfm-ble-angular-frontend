@@ -18,6 +18,7 @@ import { LoginComponent } from './components/login/login/login.component';
 import { AyudaComponent } from './components/ayuda/ayuda/ayuda.component';
 import { AdministracionAgentesComponent } from './components/administracion-agentes/administracion-agentes/administracion-agentes.component';
 import { AdministracionBlesComponent } from './components/administracion-bles/administracion-bles/administracion-bles.component';
+import { LocalizadorComponent } from './components/localizador/localizador/localizador.component';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { AdministracionBlesComponent } from './components/administracion-bles/ad
     AyudaComponent,
     AdministracionAgentesComponent,
     AdministracionBlesComponent,
+    LocalizadorComponent,
   ],
   imports: [
     BrowserModule,
