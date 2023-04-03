@@ -27,8 +27,8 @@
               <h2 class="card-title">Contacto</h2>
               <p class="card-text">Si tienes alguna pregunta o sugerencia, no dudes en contactarnos.</p>
               <ul class="list-unstyled">
-                <li><i class="fas fa-envelope"></i> <a href="mailto:contacto@app.com">contacto@app.com</a></li>
-                <li><i class="fas fa-phone"></i> +34 (555) 123-4567</li>
+                <li><i class="fas fa-envelope"></i> <a href="mailto:noelrl@gmail.com">noelrl@gmail.com</a></li>
+                <li><i class="fas fa-envelope"></i> <a href="mailto:geonexus@gmail.com">geonexus@gmail.com</a></li>
               </ul>
             </div>
           </div>
@@ -39,9 +39,9 @@
         <div class="col-md-6 col-lg-4">
           <div class="card card-help">
             <div class="card-body">
-              <h2 class="card-title">Preguntas frecuentes</h2>
-              <p class="card-text">Consulta nuestras preguntas frecuentes para obtener ayuda adicional.</p>
-              <button class="btn btn-primary" (click)="showFAQInfo()">Ir a preguntas frecuentes</button>
+              <h2 class="card-title">Descarga aquí tu agente</h2>
+              <p class="card-text">Instala el agente para la detección de dispositivos BLE.</p>
+              <button class="btn btn-primary" (click)="showFAQInfo()">Ir al Agente</button>
             </div>
           </div>
         </div>
@@ -73,8 +73,9 @@
     <div class="container-fluid">
       <div *ngIf="activeInfo === 'faq'" class="info-card" id="faq-info">
         <div class="card-body">
-          <h2>Algo de información básica</h2>
-          <p>Aquí puedes agregar tu contenido.</p>
+          <h2>Descarga tu agente</h2>
+          <p>Aquí puedes agregar tu agente -> <a href="https://github.com/tfm-ble-lan/windows_agent">Windows Agent</a> </p>
+
         </div>
       </div>
       <div *ngIf="activeInfo === 'terms'" class="info-card" id="terms-info">

@@ -304,8 +304,9 @@ export class MyMapComponent implements OnInit, AfterViewInit {
   }
 
   private simplificacionFormulaFris(rssi: number, txPower?: number): number {
-    const txPow = txPower ? txPower : 9;
-    const atenuacion = 8; // 2 para entornos abiertos, 3 para entornos urbanos
+    //Por defecto 7
+    const txPow = txPower ? txPower : 7;
+    const atenuacion = 10; //
     const ratio = (txPow - rssi) / (10.0*atenuacion); // Ratio de señal a ruido (SNR)
     const distance = Math.pow(10, ratio); // Distancia en metros
     console.log("Simplificacion friss: "+distance)

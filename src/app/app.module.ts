@@ -12,7 +12,6 @@ import { MyMapComponent } from './components/my-map/my-map.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { FormularioComponent } from './components/formulario/formulario.component';
 import { AgentsComponent } from './components/agents/agents.component';
-import { BleDevicesComponent } from './components/ble-devices/ble-devices/ble-devices.component';
 import { HistoricoBlesComponent } from './components/historico-bles/historico-bles/historico-bles.component';
 import { LoginComponent } from './components/login/login/login.component';
 import { AyudaComponent } from './components/ayuda/ayuda/ayuda.component';
@@ -28,7 +27,6 @@ import { LocalizadorComponent } from './components/localizador/localizador/local
     MenuComponent,
     FormularioComponent,
     AgentsComponent,
-    BleDevicesComponent,
     HistoricoBlesComponent,
     LoginComponent,
     AyudaComponent,
